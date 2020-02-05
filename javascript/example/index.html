@@ -29,9 +29,7 @@
 
         <div id="menu">
             <ul id="urdf-options">
-                <li urdf="../../urdf/T12/urdf/T12_flipped.URDF" color="#E91E63">ATHLETE</li>
-                <li urdf="../../urdf/TriATHLETE/urdf/TriATHLETE_flipped.URDF" color="#009688">TriATHLETE</li>
-                <li urdf="../../urdf/TriATHLETE_Climbing/urdf/TriATHLETE_flipped.URDF" color="#FFB300">TriATHLETE Climbing</li>
+                <li urdf="../../urdf/T12/urdf/T12_flipped.URDF" color="#E91E63">Rover 2020 Arm</li>
             </ul>
 
             <div id="controls" class="hidden">
@@ -46,14 +44,14 @@
                         <option value="-X">-X</option>
                         <option value="+Y">+Y</option>
                         <option value="-Y">-Y</option>
-                        <option value="+Z">+Z</option>
-                        <option value="-Z" selected>-Z</option>
+                        <option value="+Z" selected>+Z</option>
+                        <option value="-Z">-Z</option>
                     </select>
                 </label>
                 <ul></ul>
             </div>
         </div>
-        <urdf-viewer up="-Z" display-shadow tabindex="0"></urdf-viewer>
+        <urdf-viewer up="+Z" display-shadow tabindex="0"></urdf-viewer>
 
         <script src="./index.js"></script>
         <script src="./dragAndDrop.js"></script>
@@ -76,21 +74,16 @@
 
                 // animate the legs
                 const time = Date.now() / 3e2;
-                for (let i = 1; i <= 6; i++) {
 
-                    const offset = i * Math.PI / 3;
-                    const ratio = Math.max(0, Math.sin(time + offset));
+                const offset = Math.PI / 3;
+		const ratio = Math.max(0, Math.sin(time + offset));
 
-                    viewer.setAngle(`HP${ i }`, lerp(30, 0, ratio) * DEG2RAD);
-                    viewer.setAngle(`KP${ i }`, lerp(90, 150, ratio) * DEG2RAD);
-                    viewer.setAngle(`AP${ i }`, lerp(-30, -60, ratio) * DEG2RAD);
-
-                    viewer.setAngle(`TC${ i }A`, lerp(0, 0.065, ratio));
-                    viewer.setAngle(`TC${ i }B`, lerp(0, 0.065, ratio));
-
-                    viewer.setAngle(`W${ i }`, window.performance.now() * 0.001);
-
-                }
+		viewer.setAngle(`shoulder_pitch`, lerp(95, 30, ratio) * DEG2RAD);
+		viewer.setAngle(`elbow_pitch`, lerp(95, 150, ratio) * DEG2RAD);
+		viewer.setAngle(`elbow_roll`, lerp(180, 270, ratio) * DEG2RAD);
+		viewer.setAngle(`wrist_pitch`, lerp(0, 90, ratio) * DEG2RAD);
+		viewer.setAngle(`wrist_roll`, lerp(90, 0, ratio) * DEG2RAD);
+		viewer.setAngle(`base_roll`, lerp(0, 0, ratio) * DEG2RAD);
 
             };
 
@@ -111,7 +104,7 @@
                     const urdf = e.target.getAttribute('urdf');
                     const color = e.target.getAttribute('color');
 
-                    viewer.up = '-Z';
+                    viewer.up = '+Z';
                     document.getElementById('up-select').value = viewer.up;
                     viewer.urdf = urdf;
                     animToggle.classList.add('checked');
@@ -129,7 +122,7 @@
                 viewer.addEventListener('manipulate-start', e => animToggle.classList.remove('checked'));
                 viewer.addEventListener('urdf-processed', e => updateAngles());
                 updateLoop();
-                viewer.camera.position.set(-5.5, 3.5, 5.5);
+                viewer.camera.position.set(1, 1, -1);
 
             });
         </script>
